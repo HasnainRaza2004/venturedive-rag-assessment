@@ -73,20 +73,20 @@ Legend: `[ ]` todo · `[x]` done · `[-]` skipped/cancelled
 
 ### 5.A Ollama Client
 
-- [ ] **5.1** Define `LlmClient` / `Embedder` interface documentation in code
-- [ ] **5.2** Write unit tests for `ollamaClient.summarize` (mock `fetch`)
-- [ ] **5.3** Write unit tests for `ollamaClient.embed` batching
-- [ ] **5.4** Write unit tests for `ollamaClient.answer` / generate
-- [ ] **5.5** Implement `src/clients/ollamaClient.js`
-- [ ] **5.6** Add error handling tests (timeout, 5xx, malformed JSON)
+- [x] **5.1** Define `LlmClient` / `Embedder` interface documentation in code
+- [x] **5.2** Write unit tests for `ollamaClient.summarize` (mock `fetch`)
+- [x] **5.3** Write unit tests for `ollamaClient.embed` batching
+- [x] **5.4** Write unit tests for `ollamaClient.answer` / generate
+- [x] **5.5** Implement `src/clients/ollamaClient.js`
+- [x] **5.6** Add error handling tests (timeout, 5xx, malformed JSON)
 
 ### 5.B Chroma Client
 
-- [ ] **5.7** Write unit tests for `chromaClient.resetCollection`
-- [ ] **5.8** Write unit tests for `chromaClient.upsert` with metadata
-- [ ] **5.9** Write unit tests for `chromaClient.query` returning scored chunks
-- [ ] **5.10** Implement `src/clients/chromaClient.js` using official JS SDK
-- [ ] **5.11** Create test doubles: `__mocks__/ollamaClient.js`, `__mocks__/chromaClient.js` if needed
+- [x] **5.7** Write unit tests for `chromaClient.resetCollection`
+- [x] **5.8** Write unit tests for `chromaClient.upsert` with metadata
+- [x] **5.9** Write unit tests for `chromaClient.query` returning scored chunks
+- [x] **5.10** Implement `src/clients/chromaClient.js` using official JS SDK
+- [x] **5.11** Create test doubles: `__mocks__/ollamaClient.js`, `__mocks__/chromaClient.js` if needed
 
 ---
 

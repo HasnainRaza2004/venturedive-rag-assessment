@@ -1,5 +1,8 @@
 const nock = require('nock');
-const { WIKI_ARTICLE_HTML } = require('../fixtures/wiki.fixture');
+const {
+  WIKI_ARTICLE_HTML,
+  MODERN_WIKI_ARTICLE_HTML,
+} = require('../fixtures/wiki.fixture');
 const { parse, fetchAndParse } = require('../../src/scraper/wikipediaScraper');
 
 const WIKI_URL = 'https://en.wikipedia.org/wiki/Node.js';
@@ -35,6 +38,16 @@ describe('wikipediaScraper.parse', () => {
     expect(result.plainText).toContain('The project began in 2024.');
     expect(result.plainText).toContain('Initial development focused on RAG.');
     expect(result.plainText).toContain('Related topics appear here.');
+  });
+
+  it('parses modern Wikipedia HTML with mw-parser-output and mw-heading wrappers', () => {
+    const result = parse(MODERN_WIKI_ARTICLE_HTML);
+
+    expect(result.sections).toEqual([
+      { title: 'History', level: 2, text: 'History body paragraph.' },
+      { title: 'See also', level: 2, text: 'See also paragraph.' },
+    ]);
+    expect(result.plainText).toContain('Lead paragraph in parser output.');
   });
 });
 
