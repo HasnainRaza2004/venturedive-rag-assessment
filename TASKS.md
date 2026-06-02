@@ -32,40 +32,40 @@ Legend: `[ ]` todo · `[x]` done · `[-]` skipped/cancelled
 
 ### 2.A Tooling and Config
 
-- [ ] **2.1** Install backend dev dependencies: `jest`, `supertest`, `nodemon`, `eslint` (optional)
-- [ ] **2.2** Configure `jest.config.js` with coverage thresholds (85% lines), exclusions for `index.js`
-- [ ] **2.3** Implement `src/config/env.js` + unit tests for required env validation
-- [ ] **2.4** Create `src/app.js` Express app factory (no routes yet) + Supertest smoke test
-- [ ] **2.5** Create `src/index.js` server entry (listen only when not imported by tests)
+- [x] **2.1** Install backend dev dependencies: `jest`, `supertest`, `nodemon`, `eslint` (optional)
+- [x] **2.2** Configure `jest.config.js` with coverage thresholds (85% lines), exclusions for `index.js`
+- [x] **2.3** Implement `src/config/env.js` + unit tests for required env validation
+- [x] **2.4** Create `src/app.js` Express app factory (no routes yet) + Supertest smoke test
+- [x] **2.5** Create `src/index.js` server entry (listen only when not imported by tests)
 
 ### 2.B Health Route
 
-- [ ] **2.6** Write failing test: `GET /api/health` returns 200 with shape `{ status }`
-- [ ] **2.7** Implement `routes/health.js` with mocked downstream checks interface
-- [ ] **2.8** Wire health route in `app.js`; achieve coverage on health module
+- [x] **2.6** Write failing test: `GET /api/health` returns 200 with shape `{ status }`
+- [x] **2.7** Implement `routes/health.js` with mocked downstream checks interface
+- [x] **2.8** Wire health route in `app.js`; achieve coverage on health module
 
 ---
 
 ## Phase 3 — Wikipedia Scraper (TDD)
 
-- [ ] **3.1** Add HTML fixtures under `tests/fixtures/` (valid article, disambiguation, empty body)
-- [ ] **3.2** Write unit tests for URL validation helper (wikipedia host, https)
-- [ ] **3.3** Implement URL validator in `src/scraper/validateUrl.js`
-- [ ] **3.4** Write failing tests for `wikipediaScraper.parse(html)` → title, sections, plain text
-- [ ] **3.5** Implement Cheerio parser (`#mw-content-text`, headings, paragraph extraction)
-- [ ] **3.6** Write failing tests for `fetchAndParse(url)` with HTTP mocked (`axios`/`nock`)
-- [ ] **3.7** Implement fetch layer with timeout and error mapping
-- [ ] **3.8** Add `normalize.js` tests + implementation (whitespace, empty section drop)
+- [x] **3.1** Add HTML fixtures under `tests/fixtures/` (valid article, disambiguation, empty body)
+- [x] **3.2** Write unit tests for URL validation helper (wikipedia host, https)
+- [x] **3.3** Implement URL validator in `src/scraper/validateUrl.js`
+- [x] **3.4** Write failing tests for `wikipediaScraper.parse(html)` → title, sections, plain text
+- [x] **3.5** Implement Cheerio parser (`#mw-content-text`, headings, paragraph extraction)
+- [x] **3.6** Write failing tests for `fetchAndParse(url)` with HTTP mocked (`axios`/`nock`)
+- [x] **3.7** Implement fetch layer with timeout and error mapping
+- [x] **3.8** Add `normalize.js` tests + implementation (whitespace, empty section drop)
 
 ---
 
 ## Phase 4 — Text Chunking (TDD)
 
-- [ ] **4.1** Write chunker unit tests: section boundaries respected
-- [ ] **4.2** Write chunker tests: target size ~600, overlap ~100
-- [ ] **4.3** Implement `src/text/chunker.js` (section-aware recursive split)
-- [ ] **4.4** Write tests for chunk metadata fields (`sectionTitle`, `chunkIndex`, etc.)
-- [ ] **4.5** Refactor chunker constants to env-configurable defaults
+- [x] **4.1** Write chunker unit tests: section boundaries respected
+- [x] **4.2** Write chunker tests: target size ~600, overlap ~100
+- [x] **4.3** Implement `src/text/chunker.js` (section-aware recursive split)
+- [x] **4.4** Write tests for chunk metadata fields (`sectionTitle`, `chunkIndex`, etc.)
+- [x] **4.5** Refactor chunker constants to env-configurable defaults
 
 ---
 
