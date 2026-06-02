@@ -1,0 +1,29 @@
+{
+  "name": "venturedive-rag-backend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Express API for Wikipedia RAG chat",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch",
+    "test:integration": "jest --testPathPattern=integration"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "axios": "^1.16.1",
+    "cheerio": "^1.2.0",
+    "chromadb": "^3.4.3",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "jest": "^30.4.2",
+    "nock": "^14.0.15",
+    "nodemon": "^3.1.14",
+    "supertest": "^7.2.2"
+  }
+}
