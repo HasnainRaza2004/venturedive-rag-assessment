@@ -1,3 +1,4 @@
+const cors = require('cors');
 const express = require('express');
 const { ollamaClient } = require('./clients/ollamaClient');
 const { chromaClient } = require('./clients/chromaClient');
@@ -35,6 +36,11 @@ function createApp(deps = {}) {
     createDefaultRagService(state);
 
   const app = express();
+  app.use(
+    cors({
+      origin: process.env.CORS_ORIGIN ?? 'http://localhost:3000',
+    }),
+  );
   app.use(express.json());
 
   if (process.env.NODE_ENV !== 'production') {

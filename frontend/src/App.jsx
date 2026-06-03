@@ -1,122 +1,119 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useState } from 'react';
+import { ingestArticle, sendChatMessage } from './api/client';
+import UrlForm from './components/UrlForm';
+import SummaryPanel from './components/SummaryPanel';
+import ChatBox from './components/ChatBox';
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+let messageId = 0;
+function nextMessageId() {
+  messageId += 1;
+  return messageId;
 }
 
-export default App
+export default function App() {
+  const [url, setUrl] = useState('');
+  const [article, setArticle] = useState(null);
+  const [ingestLoading, setIngestLoading] = useState(false);
+  const [ingestError, setIngestError] = useState('');
+
+  const [messages, setMessages] = useState([]);
+  const [chatInput, setChatInput] = useState('');
+  const [chatLoading, setChatLoading] = useState(false);
+  const [chatError, setChatError] = useState('');
+
+  const chatEnabled = Boolean(article);
+
+  async function handleIngest() {
+    setIngestError('');
+    setIngestLoading(true);
+    setMessages([]);
+    setChatInput('');
+    setChatError('');
+
+    try {
+      const result = await ingestArticle(url.trim());
+      setArticle(result);
+    } catch (error) {
+      setArticle(null);
+      setIngestError(
+        error instanceof Error ? error.message : 'Failed to ingest article',
+      );
+    } finally {
+      setIngestLoading(false);
+    }
+  }
+
+  async function handleSend() {
+    const question = chatInput.trim();
+    if (!question || !chatEnabled || chatLoading) {
+      return;
+    }
+
+    setChatError('');
+    setChatInput('');
+
+    const userMessage = {
+      id: nextMessageId(),
+      role: 'user',
+      content: question,
+    };
+    setMessages((prev) => [...prev, userMessage]);
+    setChatLoading(true);
+
+    try {
+      const result = await sendChatMessage(question);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: nextMessageId(),
+          role: 'assistant',
+          content: result.answer,
+          sources: result.sources ?? [],
+        },
+      ]);
+    } catch (error) {
+      setChatError(
+        error instanceof Error ? error.message : 'Failed to send message',
+      );
+    } finally {
+      setChatLoading(false);
+    }
+  }
+
+  return (
+    <div className="app">
+      <header className="app-header">
+        <h1>Wikipedia RAG Chat</h1>
+        <p className="tagline">
+          Ingest a Wikipedia article, then ask questions grounded in its content.
+        </p>
+      </header>
+
+      <div className="layout">
+        <aside className="sidebar">
+          <UrlForm
+            url={url}
+            onUrlChange={setUrl}
+            onSubmit={handleIngest}
+            loading={ingestLoading}
+            disabled={ingestLoading}
+            error={ingestError}
+          />
+          <SummaryPanel article={article} />
+        </aside>
+
+        <main className="main">
+          <ChatBox
+            messages={messages}
+            input={chatInput}
+            onInputChange={setChatInput}
+            onSend={handleSend}
+            loading={chatLoading}
+            disabled={!chatEnabled}
+            error={chatError}
+          />
+        </main>
+      </div>
+    </div>
+  );
+}

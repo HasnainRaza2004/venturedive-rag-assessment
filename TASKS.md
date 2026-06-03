@@ -20,7 +20,7 @@ Legend: `[ ]` todo · `[x]` done · `[-]` skipped/cancelled
 - [x] **1.1** Initialize git repository and `.gitignore` (node_modules, .env, coverage, dist)
 - [x] **1.2** Create `backend/` and `frontend/` directory trees (empty `src/` placeholders only)
 - [x] **1.3** `npm init` backend with `package.json` scripts stubs (`test`, `start`, `dev`) — **no feature code**
-- [ ] **1.4** `npm create vite@latest` frontend (React) — default template only, no custom features yet
+- [x] **1.4** `npm create vite@latest` frontend (React) — default template only, no custom features yet
 - [x] **1.5** Add root `README.md` skeleton (prerequisites, compose command placeholders)
 - [x] **1.6** Add `.env.example` at repo root (and document per-service vars)
 - [x] **1.7** Add skeleton `docker-compose.yml` + service Dockerfiles (stub commands)
@@ -118,14 +118,14 @@ Legend: `[ ]` todo · `[x]` done · `[-]` skipped/cancelled
 
 ## Phase 8 — Frontend (Minimal UI)
 
-- [ ] **8.1** Configure Vite proxy to backend for local dev
-- [ ] **8.2** Build `UrlForm` component (submit URL, loading, error display)
-- [ ] **8.3** Build `SummaryPanel` component
-- [ ] **8.4** Build `ChatBox` component (message list, input, loading state)
-- [ ] **8.5** Wire `api/ingest` and `api/chat` client functions
-- [ ] **8.6** Disable chat until successful ingest
-- [ ] **8.7** Display source excerpts under assistant messages (optional collapsible)
-- [ ] **8.8** Basic responsive layout and accessible form labels
+- [x] **8.1** Configure Vite proxy to backend for local dev
+- [x] **8.2** Build `UrlForm` component (submit URL, loading, error display)
+- [x] **8.3** Build `SummaryPanel` component
+- [x] **8.4** Build `ChatBox` component (message list, input, loading state)
+- [x] **8.5** Wire `api/ingest` and `api/chat` client functions
+- [x] **8.6** Disable chat until successful ingest
+- [x] **8.7** Display source excerpts under assistant messages (optional collapsible)
+- [x] **8.8** Basic responsive layout and accessible form labels
 
 ---
 
