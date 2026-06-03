@@ -8,10 +8,13 @@ const DEFAULTS = {
   CHROMA_COLLECTION_PREFIX: 'wiki_article',
   CHUNK_SIZE_CHARS: '600',
   CHUNK_OVERLAP_CHARS: '100',
-  RAG_TOP_K: '4',
+  RAG_TOP_K: '8',
+  RAG_MIN_SCORE: '0.3',
   LLM_TEMPERATURE: '0.2',
   WIKIPEDIA_HOST_ALLOWLIST: 'en.wikipedia.org',
   HTTP_TIMEOUT_MS: '15000',
+  OLLAMA_TIMEOUT_MS: '300000',
+  SUMMARIZE_MAX_CHARS: '12000',
 };
 
 function readString(source, key, defaultValue) {
@@ -90,6 +93,10 @@ function loadEnv(source = process.env) {
       readString(merged, 'RAG_TOP_K', DEFAULTS.RAG_TOP_K),
       'RAG_TOP_K',
     ),
+    RAG_MIN_SCORE: parseNonNegativeFloat(
+      readString(merged, 'RAG_MIN_SCORE', DEFAULTS.RAG_MIN_SCORE),
+      'RAG_MIN_SCORE',
+    ),
     LLM_TEMPERATURE: parseNonNegativeFloat(
       readString(merged, 'LLM_TEMPERATURE', DEFAULTS.LLM_TEMPERATURE),
       'LLM_TEMPERATURE',
@@ -102,6 +109,14 @@ function loadEnv(source = process.env) {
     HTTP_TIMEOUT_MS: parsePositiveInt(
       readString(merged, 'HTTP_TIMEOUT_MS', DEFAULTS.HTTP_TIMEOUT_MS),
       'HTTP_TIMEOUT_MS',
+    ),
+    OLLAMA_TIMEOUT_MS: parsePositiveInt(
+      readString(merged, 'OLLAMA_TIMEOUT_MS', DEFAULTS.OLLAMA_TIMEOUT_MS),
+      'OLLAMA_TIMEOUT_MS',
+    ),
+    SUMMARIZE_MAX_CHARS: parsePositiveInt(
+      readString(merged, 'SUMMARIZE_MAX_CHARS', DEFAULTS.SUMMARIZE_MAX_CHARS),
+      'SUMMARIZE_MAX_CHARS',
     ),
   };
 }

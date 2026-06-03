@@ -92,27 +92,27 @@ Legend: `[ ]` todo · `[x]` done · `[-]` skipped/cancelled
 
 ## Phase 6 — Prompts and RAG Service (TDD)
 
-- [ ] **6.1** Write tests for `prompts/summarize.js` template structure
-- [ ] **6.2** Write tests for `prompts/ragAnswer.js` (context injection, refusal instruction)
-- [ ] **6.3** Implement prompt builders
-- [ ] **6.4** Write `ragService` tests with mocked embedder, vector store, LLM
-- [ ] **6.5** Implement `ragService.answer(question)` → `{ answer, sources }`
-- [ ] **6.6** Write tests for low-confidence retrieval (empty/low score → not found message)
-- [ ] **6.7** Write `ingestService` tests (full pipeline mocked)
-- [ ] **6.8** Implement `ingestService.ingest(url)` orchestration
+- [x] **6.1** Write tests for `prompts/summarize.js` template structure
+- [x] **6.2** Write tests for `prompts/ragAnswer.js` (context injection, refusal instruction)
+- [x] **6.3** Implement prompt builders
+- [x] **6.4** Write `ragService` tests with mocked embedder, vector store, LLM
+- [x] **6.5** Implement `ragService.answer(question)` → `{ answer, sources }`
+- [x] **6.6** Write tests for low-confidence retrieval (empty/low score → not found message)
+- [x] **6.7** Write `ingestService` tests (full pipeline mocked)
+- [x] **6.8** Implement `ingestService.ingest(url)` orchestration
 
 ---
 
 ## Phase 7 — HTTP Routes (TDD)
 
-- [ ] **7.1** Write Supertest: `POST /api/ingest` happy path (mocked services)
-- [ ] **7.2** Write Supertest: ingest validation errors (`400`, `422`)
-- [ ] **7.3** Implement `routes/ingest.js`
-- [ ] **7.4** Write Supertest: `POST /api/chat` happy path
-- [ ] **7.5** Write Supertest: chat `409` when no article indexed
-- [ ] **7.6** Implement `routes/chat.js`
-- [ ] **7.7** Add Express error middleware + consistent JSON error shape
-- [ ] **7.8** Add request logging middleware (dev only)
+- [x] **7.1** Write Supertest: `POST /api/ingest` happy path (mocked services)
+- [x] **7.2** Write Supertest: ingest validation errors (`400`, `422`)
+- [x] **7.3** Implement `routes/ingest.js`
+- [x] **7.4** Write Supertest: `POST /api/chat` happy path
+- [x] **7.5** Write Supertest: chat `409` when no article indexed
+- [x] **7.6** Implement `routes/chat.js`
+- [x] **7.7** Add Express error middleware + consistent JSON error shape
+- [x] **7.8** Add request logging middleware (dev only)
 
 ---
 
