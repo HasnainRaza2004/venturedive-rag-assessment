@@ -1,5 +1,6 @@
 const axios = require('axios');
 const { env } = require('../config/env');
+const { buildSummarizePrompt } = require('../prompts/summarize');
 
 class OllamaClientError extends Error {
   constructor(message, options = {}) {
@@ -9,13 +10,8 @@ class OllamaClientError extends Error {
   }
 }
 
-function buildSummarizePrompt(articleText) {
-  return [
-    'Summarize the following Wikipedia article in 3 to 5 concise sentences.',
-    'Use only information present in the article.',
-    '',
-    articleText,
-  ].join('\n');
+function bodyUsesModel(path, body) {
+  return Boolean(body?.model && ['/api/generate', '/api/chat', '/api/embed'].includes(path));
 }
 
 function createOllamaClient(deps = {}) {
@@ -24,7 +20,7 @@ function createOllamaClient(deps = {}) {
   const model = deps.model ?? env.OLLAMA_MODEL;
   const embeddingModel = deps.embeddingModel ?? env.EMBEDDING_MODEL;
   const embedBatchSize = deps.embedBatchSize ?? 16;
-  const timeoutMs = deps.timeoutMs ?? env.HTTP_TIMEOUT_MS;
+  const timeoutMs = deps.timeoutMs ?? env.OLLAMA_TIMEOUT_MS ?? env.HTTP_TIMEOUT_MS;
   const defaultTemperature = deps.defaultTemperature ?? env.LLM_TEMPERATURE;
 
   async function request(path, body) {
@@ -42,10 +38,15 @@ function createOllamaClient(deps = {}) {
       }
 
       if (response.status >= 400) {
-        throw new OllamaClientError(
-          `Ollama request failed with status ${response.status}`,
-          { status: response.status },
-        );
+        const modelHint = bodyUsesModel(path, body)
+          ? ` Run "ollama pull ${body.model}" if it is not installed.`
+          : '';
+        const detail =
+          response.status === 404
+            ? `Ollama model or endpoint not found (HTTP 404).${modelHint}`
+            : `Ollama request failed with status ${response.status}`;
+
+        throw new OllamaClientError(detail, { status: response.status });
       }
 
       return response.data;
