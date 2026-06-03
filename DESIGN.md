@@ -49,7 +49,7 @@ This document describes the architecture for a containerized RAG chat applicatio
 | **Embedder** | Produces vectors via local Ollama embedding model |
 | **Vector store adapter** | Chroma collection CRUD (upsert, similarity search) |
 | **LLM adapter** | Ollama generate/chat for summary and grounded answers |
-| **RAG service** | Retrieves top-k chunks, builds prompt, returns answer + citations |
+| **RAG service** | Retrieves top-k from Chroma, filters by `RAG_MIN_SCORE`, builds prompt, returns answer + citations |
 | **ChromaDB** | Persistent vector storage (Docker volume) |
 | **Ollama** | Hosts `llama3.2:3b` (generation) and embedding model (see §5) |
 
@@ -57,7 +57,7 @@ This document describes the architecture for a containerized RAG chat applicatio
 
 Because the brief excludes multi-article history and authentication, the backend holds **at most one indexed article** in memory for the lifetime of the process (or until a new URL is ingested):
 
-- `articleState`: `{ url, title, summary, collectionName, chunkCount, indexedAt }`
+- `articleState`: `{ isIndexed, title, summary, collectionName, chunkCount }`
 - Ingesting a new URL **replaces** the previous Chroma collection and state (documented in README).
 
 This avoids session stores and keeps the API surface minimal.
@@ -106,7 +106,10 @@ User question
 [Embed question]
    │
    ▼
-[Chroma similarity search, top-k=4]
+[Chroma similarity search, topK=8 (env)]
+   │
+   ▼
+[Filter: chunk.score >= RAG_MIN_SCORE (default 0.1)] ──none──▶ not-found (no LLM call)
    │
    ▼
 [Build RAG prompt: system + context chunks + question]
@@ -150,9 +153,10 @@ sequenceDiagram
     UI->>API: POST /api/chat { message }
     API->>Emb: embed(message)
     Emb-->>API: queryVector
-    API->>Chroma: query(topK=4)
+    API->>Chroma: query(topK=8)
     Chroma-->>API: chunks + scores
-    API->>LLM: generate(RAG prompt + chunks)
+    API->>API: filter(score >= RAG_MIN_SCORE)
+    API->>LLM: generate(RAG prompt + relevant chunks)
     LLM-->>API: answer
     API-->>UI: { answer, sources }
 ```
@@ -246,11 +250,14 @@ sequenceDiagram
 
 ### 5.3 Retrieval Parameters
 
-| Parameter | Value | Notes |
-|-----------|-------|-------|
-| `topK` | 4 | Balance context size vs. 3B window |
+| Parameter | Default | Notes |
+|-----------|---------|-------|
+| `RAG_TOP_K` | 8 | Chroma query size; tune via `.env` |
+| `RAG_MIN_SCORE` | 0.1 (10%) | Chunks below threshold are discarded before LLM and API sources |
+| Similarity score | `max(0, 1 - distance)` | Exposed to UI as `% match` |
 | Distance | cosine (Chroma default) | Via embedding normalization |
-| Min score threshold | optional 0.35 | Return “I couldn’t find that in the article” if all scores low |
+
+If every retrieved chunk is below `RAG_MIN_SCORE`, the API returns the not-found message with empty `sources` (no fallback to weak matches).
 
 ---
 
@@ -345,9 +352,9 @@ services:
 
 **Healthchecks:**
 
-- Ollama: `GET /api/tags`
-- Chroma: `GET /api/v1/heartbeat`
-- Backend: `GET /api/health` (checks downstream reachability)
+- Ollama: `ollama list` includes `llama3.2:3b` and `nomic-embed-text` (long `start_period` for first pull)
+- Chroma: bash `</dev/tcp/127.0.0.1/8000>` (slim image has no curl/python)
+- Backend: `GET /api/health` (Compose probe; JSON labels for ollama/chroma are static placeholders)
 
 ---
 
@@ -357,9 +364,9 @@ services:
 |-------|-------|-------|
 | Unit | Scraper, chunker, normalize, prompts, services | Mock `LlmClient`, `Embedder`, `VectorStore` |
 | HTTP | Routes via Supertest + `app.js` | Same mocks injected |
-| Integration | One path: ingest fixture HTML + query (optional tag `@integration`) | Real Chroma + Ollama in CI/local only |
+| Integration | `tests/integration/rag.e2e.test.js` (`npm run test:integration`) | Real Chroma + Ollama; Wikipedia HTTP nocked |
 
-**Coverage:** Jest `collectCoverageFrom` targeting `backend/src/**/*.js`, excluding `index.js` bootstrap. Threshold: **85% lines** globally. Commit `coverage/lcov-report` or screenshot per submission checklist.
+**Coverage:** Jest `collectCoverageFrom` targeting `backend/src/**/*.js`, excluding `index.js` and `contracts.js`. Threshold: **85% lines** globally (verified ~94%). Unit tests exclude `tests/integration/`; screenshot optional under `docs/coverage/`.
 
 ---
 
@@ -370,14 +377,15 @@ services:
 | Non-Wikipedia URL | `400` with clear message |
 | Disambiguation / empty body | `422` |
 | Ollama not ready | `502`, health shows degraded |
-| Question with no relevant chunks | Answer states not found in article |
+| All chunks below `RAG_MIN_SCORE` | Not-found message; no LLM call; empty `sources` |
+| Question with no Chroma hits | Same not-found path |
 | Second ingest URL | Replaces collection; UI shows new summary |
 
 ---
 
 ## 10. Security and Configuration
 
-- **No secrets in repo.** All tunables in `.env.example` (service URLs, model names, chunk sizes, `topK`).
+- **No secrets in repo.** All tunables in `.env.example` (service URLs, model names, chunk sizes, `RAG_TOP_K`, `RAG_MIN_SCORE`).
 - Backend validates URLs (HTTPS, `en.wikipedia.org` host allowlist configurable).
 - Request body size limits on Express.
 - CORS restricted to frontend origin in production compose.

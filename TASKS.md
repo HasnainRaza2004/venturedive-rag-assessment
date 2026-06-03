@@ -1,6 +1,6 @@
 # Execution Log — VentureDive RAG Wikipedia Chat
 
-Granular, sequenced task list for Phase 2+ implementation. Update checkboxes as work completes. **Phases 0–10 complete; Phase 11 (demo, push) remaining.**
+Granular, sequenced task list for Phase 2+ implementation. Update checkboxes as work completes. **Phases 0–11 complete (submission).**
 
 Legend: `[ ]` todo · `[x]` done · `[-]` skipped/cancelled
 

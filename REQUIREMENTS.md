@@ -44,6 +44,6 @@ To maintain a tight, well-tested implementation, the following features are inte
 |----------|--------|
 | `REQUIREMENTS.md` | Finalized and aligned with built system |
 | `DESIGN.md` | Architecture and data flow documented |
-| `TASKS.md` | Execution log; Phases 2–9 complete |
+| `TASKS.md` | Execution log; Phases 0–11 complete |
 
 Open questions resolved during build: single-article memory, mock boundaries for unit tests, Chroma v2 API, slim-image healthcheck pattern (documented in README troubleshooting).
