@@ -1,6 +1,7 @@
-# VentureDive RAG — full stack skeleton
+# VentureDive RAG — full stack
+# Prerequisites: copy .env.example to .env
 # Run: docker compose up --build
-# Copy .env.example to .env before first run.
+# App: http://localhost:3000 (first start may take several minutes while Ollama pulls models)
 
 services:
   ollama:
@@ -10,15 +11,20 @@ services:
       - "${OLLAMA_HOST_PORT:-11434}:11434"
     volumes:
       - ollama-data:/root/.ollama
+      - ./scripts/ollama-entrypoint.sh:/ollama-entrypoint.sh:ro
+    entrypoint: ["/bin/sh", "/ollama-entrypoint.sh"]
     healthcheck:
-      test: ["CMD", "ollama", "list"]
-      interval: 10s
-      timeout: 5s
-      retries: 12
-      start_period: 30s
+      test:
+        [
+          "CMD-SHELL",
+          "ollama list 2>/dev/null | grep -qE 'llama3\\.2:3b|llama3\\.2:latest' && ollama list 2>/dev/null | grep -q 'nomic-embed-text'",
+        ]
+      interval: 30s
+      timeout: 15s
+      retries: 60
+      start_period: 900s
     networks:
       - rag-network
-    # TODO (Phase 9): entrypoint to pull llama3.2:3b and nomic-embed-text
 
   chroma:
     image: chromadb/chroma:latest
@@ -31,11 +37,12 @@ services:
       - IS_PERSISTENT=TRUE
       - ANONYMIZED_TELEMETRY=FALSE
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v2/heartbeat"]
+      # Slim Chroma image has no python3/curl; bash /dev/tcp is zero-deps (see chroma-cookbook)
+      test: ["CMD", "/bin/bash", "-c", "</dev/tcp/127.0.0.1/8000"]
       interval: 10s
       timeout: 5s
-      retries: 12
-      start_period: 15s
+      retries: 18
+      start_period: 45s
     networks:
       - rag-network
 
@@ -53,6 +60,7 @@ services:
       - PORT=4000
       - OLLAMA_BASE_URL=http://ollama:11434
       - CHROMA_URL=http://chroma:8000
+      - CORS_ORIGIN=http://localhost:${FRONTEND_HOST_PORT:-3000}
     depends_on:
       ollama:
         condition: service_healthy
@@ -63,7 +71,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 12
-      start_period: 20s
+      start_period: 30s
     networks:
       - rag-network
 

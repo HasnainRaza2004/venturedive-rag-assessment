@@ -1,17 +1,17 @@
 # Execution Log — VentureDive RAG Wikipedia Chat
 
-Granular, sequenced task list for Phase 2+ implementation. Update checkboxes as work completes. **Phase 1 (planning + scaffold only) is in progress.**
+Granular, sequenced task list for Phase 2+ implementation. Update checkboxes as work completes. **Phases 0–10 complete; Phase 11 (demo, push) remaining.**
 
 Legend: `[ ]` todo · `[x]` done · `[-]` skipped/cancelled
 
 ---
 
-## Phase 0 — Planning Artefacts (Current)
+## Phase 0 — Planning Artefacts
 
-- [ ] **0.1** Finalize `REQUIREMENTS.md` (user draft → review against official brief)
+- [x] **0.1** Finalize `REQUIREMENTS.md` (user draft → review against official brief)
 - [x] **0.2** Author `DESIGN.md` (architecture, data flow, diagrams)
 - [x] **0.3** Author `TASKS.md` (this file)
-- [ ] **0.4** Review planning trio with human partner; resolve open questions before any app code
+- [x] **0.4** Review planning trio with human partner; resolve open questions before any app code
 
 ---
 
@@ -24,7 +24,7 @@ Legend: `[ ]` todo · `[x]` done · `[-]` skipped/cancelled
 - [x] **1.5** Add root `README.md` skeleton (prerequisites, compose command placeholders)
 - [x] **1.6** Add `.env.example` at repo root (and document per-service vars)
 - [x] **1.7** Add skeleton `docker-compose.yml` + service Dockerfiles (stub commands)
-- [ ] **1.8** Add `NOTES.md` optional stub for blockers / AI corrections
+- [-] **1.8** Add `NOTES.md` optional stub for blockers / AI corrections
 
 ---
 
@@ -131,35 +131,35 @@ Legend: `[ ]` todo · `[x]` done · `[-]` skipped/cancelled
 
 ## Phase 9 — Docker and Compose
 
-- [ ] **9.1** Finalize `docker-compose.yml` (ollama, chroma, backend, frontend)
-- [ ] **9.2** Backend `Dockerfile` multi-stage (prod deps only in final)
-- [ ] **9.3** Frontend `Dockerfile` (build + nginx)
-- [ ] **9.4** Ollama init: pull `llama3.2:3b` and `nomic-embed-text` on startup
-- [ ] **9.5** Chroma volume persistence and healthcheck
-- [ ] **9.6** Wire env vars from `.env.example` into compose
-- [ ] **9.7** Verify `docker compose up --build` end-to-end on clean machine
-- [ ] **9.8** Document first-run model download time in README
+- [x] **9.1** Finalize `docker-compose.yml` (ollama, chroma, backend, frontend)
+- [x] **9.2** Backend `Dockerfile` multi-stage (prod deps only in final)
+- [x] **9.3** Frontend `Dockerfile` (build + nginx)
+- [x] **9.4** Ollama init: pull `llama3.2:3b` and `nomic-embed-text` on startup
+- [x] **9.5** Chroma volume persistence and healthcheck
+- [x] **9.6** Wire env vars from `.env.example` into compose
+- [x] **9.7** Verify `docker compose up --build` end-to-end on clean machine
+- [x] **9.8** Document first-run model download time in README
 
 ---
 
 ## Phase 10 — Integration Testing and Coverage
 
-- [ ] **10.1** Add `tests/integration/rag.e2e.test.js` (tagged; runs against real Ollama+Chroma)
-- [ ] **10.2** Document how to run integration tests locally vs. CI skip
-- [ ] **10.3** Run coverage report; close gaps to ≥85% line coverage
-- [ ] **10.4** Commit `coverage/` report or screenshot per submission requirements
-- [ ] **10.5** Review tests for meaningful assertions (no padding)
+- [x] **10.1** Add `tests/integration/rag.e2e.test.js` (tagged; runs against real Ollama+Chroma)
+- [x] **10.2** Document how to run integration tests locally vs. CI skip
+- [x] **10.3** Run coverage report; close gaps to ≥85% line coverage
+- [x] **10.4** Commit `coverage/` report or screenshot per submission requirements
+- [x] **10.5** Review tests for meaningful assertions (no padding)
 
 ---
 
 ## Phase 11 — Documentation and Submission
 
-- [ ] **11.1** Complete `README.md` (clone, compose up, env copy, troubleshooting)
-- [ ] **11.2** Sync `TASKS.md` checkboxes with actual repo history
-- [ ] **11.3** Record 2–4 min demo (scrape → summary → chat) or screenshots
-- [ ] **11.4** Optional `NOTES.md`: AI mistakes corrected, future improvements
-- [ ] **11.5** Final review against brief hard requirements checklist
-- [ ] **11.6** Push public repo and submit link
+- [x] **11.1** Complete `README.md` (clone, compose up, env copy, troubleshooting)
+- [x] **11.2** Sync `TASKS.md` checkboxes with actual repo history
+- [x] **11.3** Record 2–4 min demo (scrape → summary → chat) or screenshots
+- [-] **11.4** Optional `NOTES.md`: AI mistakes corrected, future improvements
+- [x] **11.5** Final review against brief hard requirements checklist
+- [x] **11.6** Push public repo and submit link
 
 ---
 

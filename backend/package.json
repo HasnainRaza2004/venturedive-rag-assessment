@@ -9,7 +9,7 @@
     "dev": "nodemon src/index.js",
     "test": "jest --coverage",
     "test:watch": "jest --watch",
-    "test:integration": "jest --testPathPattern=integration"
+    "test:integration": "jest -c jest.integration.config.js --runInBand"
   },
   "keywords": [],
   "author": "",
