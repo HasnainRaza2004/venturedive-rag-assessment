@@ -29,7 +29,7 @@ scripts/          Ollama model pull entrypoint
 ## Quick start (Docker — full stack)
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/HasnainRaza2004/venturedive-rag-assessment.git
 cd venturedive-rag-assessment
 cp .env.example .env
 docker compose up --build
