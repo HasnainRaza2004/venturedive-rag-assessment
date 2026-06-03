@@ -29,7 +29,7 @@ describe('createOllamaClient', () => {
         .post('/api/generate', (body) => {
           expect(body.model).toBe('llama3.2:3b');
           expect(body.stream).toBe(false);
-          expect(body.prompt).toContain('Summarize the following');
+          expect(body.prompt).toContain('Output ONLY the summary text');
           expect(body.prompt).toContain('Article body here.');
           return true;
         })

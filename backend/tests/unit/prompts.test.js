@@ -2,12 +2,16 @@ const { buildSummarizePrompt } = require('../../src/prompts/summarize');
 const { buildRagAnswerPrompt } = require('../../src/prompts/ragAnswer');
 
 describe('buildSummarizePrompt', () => {
-  it('includes the article text in the prompt', () => {
+  it('includes the article text and strict output-only instructions', () => {
     const articleText = 'Karachi is the largest city in Pakistan.';
     const prompt = buildSummarizePrompt(articleText);
 
     expect(prompt).toContain(articleText);
-    expect(prompt).toMatch(/summarize/i);
+    expect(prompt).toMatch(/summariz/i);
+    expect(prompt).toMatch(/output only the summary text/i);
+    expect(prompt).toMatch(/must not include any introductory phrases/i);
+    expect(prompt).toMatch(/do not say .here is a summary/i);
+    expect(prompt).toMatch(/raw summary text directly/i);
   });
 });
 

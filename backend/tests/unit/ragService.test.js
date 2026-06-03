@@ -11,7 +11,7 @@ describe('createRagService', () => {
     llmClient,
     collectionName: 'wiki_article_test',
     topK: 8,
-    minScore: 0.3,
+    minScore: 0.1,
   };
 
   beforeEach(() => {
@@ -69,7 +69,7 @@ describe('createRagService', () => {
     });
   });
 
-  it('passes all top-k chunks to the LLM when the best match clears the threshold', async () => {
+  it('drops chunks below minScore before LLM context and sources', async () => {
     vectorStore.query.mockResolvedValue([
       {
         id: 'chunk-0',
@@ -81,26 +81,61 @@ describe('createRagService', () => {
       {
         id: 'chunk-1',
         text: 'Unrelated education content.',
-        score: 0.2,
-        distance: 0.8,
+        score: 0.05,
+        distance: 0.95,
         metadata: { sectionTitle: 'Education' },
       },
     ]);
 
     const service = createRagService(baseDeps);
-    await service.answer('When was Karachi founded?');
+    const result = await service.answer('When was Karachi founded?');
 
     expect(llmClient.answer).toHaveBeenCalledWith(
       expect.stringContaining('Karachi was founded in 1729.'),
       expect.any(Object),
     );
-    expect(llmClient.answer).toHaveBeenCalledWith(
+    expect(llmClient.answer).not.toHaveBeenCalledWith(
       expect.stringContaining('Unrelated education content.'),
       expect.any(Object),
     );
+    expect(result.sources).toEqual([
+      {
+        section: 'History',
+        excerpt: 'Karachi was founded in 1729.',
+        score: 0.45,
+      },
+    ]);
   });
 
-  it('still calls the LLM when similarity scores are low (e.g. typos in the question)', async () => {
+  it('returns not-found when every retrieved chunk is below minScore', async () => {
+    vectorStore.query.mockResolvedValue([
+      {
+        id: 'chunk-0',
+        text: 'Weakly related text.',
+        score: 0.02,
+        distance: 0.98,
+        metadata: { sectionTitle: 'Misc' },
+      },
+      {
+        id: 'chunk-1',
+        text: 'Another poor match.',
+        score: 0,
+        distance: 1,
+        metadata: { sectionTitle: 'Other' },
+      },
+    ]);
+
+    const service = createRagService(baseDeps);
+    const result = await service.answer('Something unrelated?');
+
+    expect(llmClient.answer).not.toHaveBeenCalled();
+    expect(result).toEqual({
+      answer: 'I could not find that information in the article.',
+      sources: [],
+    });
+  });
+
+  it('includes chunks at or above the 10% similarity floor', async () => {
     vectorStore.query.mockResolvedValue([
       {
         id: 'chunk-0',
@@ -119,7 +154,9 @@ describe('createRagService', () => {
 
     expect(llmClient.answer).toHaveBeenCalled();
     expect(result.answer).toContain('Karachee');
-    expect(result.sources).toHaveLength(1);
+    expect(result.sources).toEqual([
+      expect.objectContaining({ score: 0.12 }),
+    ]);
   });
 
   it('throws when no collection is indexed', async () => {

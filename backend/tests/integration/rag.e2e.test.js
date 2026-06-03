@@ -93,9 +93,13 @@ describe('RAG stack E2E @integration', () => {
         expect.objectContaining({
           section: expect.any(String),
           excerpt: expect.any(String),
+          score: expect.any(Number),
         }),
       ]),
     );
+    chatResponse.body.sources.forEach((source) => {
+      expect(source.score).toBeGreaterThanOrEqual(0.1);
+    });
 
     expect(chatResponse.body.answer).not.toMatch(
       /could not find that information/i,

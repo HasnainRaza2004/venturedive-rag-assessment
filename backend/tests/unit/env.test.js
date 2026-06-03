@@ -40,7 +40,7 @@ describe('loadEnv', () => {
     expect(env.CHUNK_SIZE_CHARS).toBe(600);
     expect(env.CHUNK_OVERLAP_CHARS).toBe(100);
     expect(env.RAG_TOP_K).toBe(8);
-    expect(env.RAG_MIN_SCORE).toBe(0.3);
+    expect(env.RAG_MIN_SCORE).toBe(0.1);
     expect(env.HTTP_TIMEOUT_MS).toBe(15000);
   });
 

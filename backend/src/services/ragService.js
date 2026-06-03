@@ -41,14 +41,18 @@ function createRagService(deps = {}) {
       topK,
     );
 
-    if (retrievedChunks.length === 0) {
+    const relevantChunks = retrievedChunks.filter(
+      (chunk) => chunk.score >= minScore,
+    );
+
+    if (relevantChunks.length === 0) {
       return {
         answer: NOT_FOUND_MESSAGE,
         sources: [],
       };
     }
 
-    const contextChunks = retrievedChunks.map((chunk) => ({
+    const contextChunks = relevantChunks.map((chunk) => ({
       text: chunk.text,
       sectionTitle: chunk.metadata?.sectionTitle ?? 'Unknown',
     }));
@@ -59,14 +63,9 @@ function createRagService(deps = {}) {
       temperature: defaultTemperature,
     });
 
-    const strongSources = retrievedChunks.filter((chunk) => chunk.score >= minScore);
-    const sources = (strongSources.length > 0 ? strongSources : retrievedChunks).map(
-      toSource,
-    );
-
     return {
       answer: answerText,
-      sources,
+      sources: relevantChunks.map(toSource),
     };
   }
 
